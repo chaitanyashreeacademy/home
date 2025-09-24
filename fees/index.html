@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Tuition Fee Payment Portal</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+        }
+        
+        /* Animated Background Elements */
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+            animation: backgroundMove 20s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundMove {
+            0%, 100% { 
+                transform: translateX(0) translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            25% { 
+                transform: translateX(-20px) translateY(-10px) rotate(1deg);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: translateX(20px) translateY(20px) rotate(-1deg);
+                opacity: 1;
+            }
+            75% { 
+                transform: translateX(-10px) translateY(10px) rotate(0.5deg);
+                opacity: 0.9;
+            }
+        }
+        
+        /* Floating Particles */
+        .floating-particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Interactive Glow Effect */
+        .interactive-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        .card-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+        .input-focus:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .payment-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        .payment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .demo-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            animation: pulse 2s infinite;
+            position: relative;
+            z-index: 20;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        /* Geometric Shapes Animation */
+        .geometric-shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: geometricFloat 25s infinite ease-in-out;
+        }
+        
+        @keyframes geometricFloat {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            25% { 
+                transform: translateY(-30px) rotate(90deg) scale(1.1);
+            }
+            50% { 
+                transform: translateY(-60px) rotate(180deg) scale(0.9);
+            }
+            75% { 
+                transform: translateY(-30px) rotate(270deg) scale(1.05);
+            }
+        }
+        
+
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <!-- Interactive Glow Effect -->
+    <div id="interactiveGlow" class="interactive-glow"></div>
+    
+    <!-- Floating Particles -->
+    <div id="particleContainer"></div>
+    
+    <!-- Geometric Shapes -->
+    <div class="geometric-shape" style="top: 10%; left: 10%; animation-delay: 0s;">
+        <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <circle cx="30" cy="30" r="25" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none"/>
+        </svg>
+    </div>
+    <div class="geometric-shape" style="top: 20%; right: 15%; animation-delay: 5s;">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <rect x="5" y="5" width="30" height="30" stroke="rgba(255,255,255,0.15)" stroke-width="2" fill="none" rx="5"/>
+        </svg>
+    </div>
+    <div class="geometric-shape" style="bottom: 30%; left: 20%; animation-delay: 10s;">
+        <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
+            <polygon points="25,5 45,40 5,40" stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none"/>
+        </svg>
+    </div>
+    <div class="geometric-shape" style="bottom: 10%; right: 25%; animation-delay: 15s;">
+        <svg width="35" height="35" viewBox="0 0 35 35" fill="none">
+            <path d="M17.5 2L32 32H3L17.5 2Z" stroke="rgba(255,255,255,0.12)" stroke-width="2" fill="none"/>
+        </svg>
+    </div>
+
+
+
+    <!-- College Header -->
+    <div class="demo-badge text-white text-center py-2 px-4 text-sm font-medium">
+        🎓 Chaitanya Shree Academy
+    </div>
+
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <!-- Header -->
+        <div class="text-center mb-8" id="pageHeader">
+            <h1 class="text-4xl font-bold text-white mb-2">College Fee Payment Portal</h1>
+            <p class="text-white/80 text-lg">Secure and Easy Tuition Fee Payment</p>
+        </div>
+
+        <!-- Payment Form -->
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl card-shadow p-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Pay Tuition Fees</h2>
+                    <p class="text-gray-600">Please fill in your details and payment amount</p>
+                </div>
+
+                <form id="paymentForm" class="space-y-6">
+                    <!-- Student Name -->
+                    <div>
+                        <label for="studentName" class="block text-sm font-medium text-gray-700 mb-2">
+                            Student Name *
+                        </label>
+                        <input 
+                            type="text" 
+                            id="studentName" 
+                            name="studentName"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus transition-all duration-200 text-gray-800"
+                            placeholder="Enter student's full name"
+                        >
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div>
+                        <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-2">
+                            Phone Number *
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="phoneNumber" 
+                            name="phoneNumber"
+                            required
+                            pattern="[0-9]{10}"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus transition-all duration-200 text-gray-800"
+                            placeholder="Enter 10-digit phone number"
+                        >
+                    </div>
+
+                    <!-- Father's Name -->
+                    <div>
+                        <label for="fatherName" class="block text-sm font-medium text-gray-700 mb-2">
+                            Father's Name *
+                        </label>
+                        <input 
+                            type="text" 
+                            id="fatherName" 
+                            name="fatherName"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus transition-all duration-200 text-gray-800"
+                            placeholder="Enter father's full name"
+                        >
+                    </div>
+
+                    <!-- Class Selection -->
+                    <div>
+                        <label for="studentClass" class="block text-sm font-medium text-gray-700 mb-2">
+                            Class *
+                        </label>
+                        <select 
+                            id="studentClass" 
+                            name="studentClass"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus transition-all duration-200 text-gray-800 bg-white"
+                        >
+                            <option value="">Select Class</option>
+                            <option value="1st PUC">1st PUC</option>
+                            <option value="2nd PUC">2nd PUC</option>
+                        </select>
+                    </div>
+
+                    <!-- Fee Amount -->
+                    <div>
+                        <label for="feeAmount" class="block text-sm font-medium text-gray-700 mb-2">
+                            Tuition Fee Amount (₹) *
+                        </label>
+                        <input 
+                            type="number" 
+                            id="feeAmount" 
+                            name="feeAmount"
+                            required
+                            min="1"
+                            step="0.01"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus transition-all duration-200 text-gray-800 text-xl font-semibold"
+                            placeholder="Enter amount to pay"
+                        >
+                        <p class="text-sm text-gray-500 mt-1">Enter the exact amount you wish to pay</p>
+                    </div>
+
+                    <!-- Payment Summary -->
+                    <div id="paymentSummary" class="bg-gray-50 rounded-lg p-4 hidden">
+                        <h3 class="font-semibold text-gray-800 mb-2">Payment Summary</h3>
+                        <div class="space-y-1 text-sm text-gray-600">
+                            <div class="flex justify-between">
+                                <span>Student:</span>
+                                <span id="summaryStudent">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Phone:</span>
+                                <span id="summaryPhone">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Father's Name:</span>
+                                <span id="summaryFather">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Class:</span>
+                                <span id="summaryClass">-</span>
+                            </div>
+                            <div class="flex justify-between pt-2 border-t">
+                                <span>Tuition Fee:</span>
+                                <span id="summaryTuitionFee">₹0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Service Fee (2%):</span>
+                                <span id="summaryServiceFee">₹0</span>
+                            </div>
+                            <div class="flex justify-between font-semibold text-lg text-gray-800 pt-2 border-t">
+                                <span>Total Amount:</span>
+                                <span id="summaryAmount">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions Agreement -->
+                    <div class="flex items-start space-x-3">
+                        <input 
+                            type="checkbox" 
+                            id="agreeTerms" 
+                            name="agreeTerms"
+                            required
+                            class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        >
+                        <label for="agreeTerms" class="text-sm text-gray-700">
+                            I agree to the 
+                            <button type="button" onclick="showTerms()" class="text-blue-600 hover:text-blue-800 underline">Terms and Conditions</button>, 
+                            <button type="button" onclick="showPrivacyPolicy()" class="text-blue-600 hover:text-blue-800 underline">Privacy Policy</button>, and 
+                            <button type="button" onclick="showRefundPolicy()" class="text-blue-600 hover:text-blue-800 underline">Refund Policy</button> *
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        class="w-full payment-btn text-white font-semibold py-4 px-6 rounded-lg text-lg"
+                    >
+                        💳 Pay with Razorpay
+                    </button>
+                </form>
+
+                <!-- Security Notice -->
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-blue-800">Secure Payment</h3>
+                            <p class="text-sm text-blue-700 mt-1">Your payment is processed securely through Razorpay. All transactions are encrypted and protected.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Footer with Policies -->
+        <footer class="mt-16 bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="grid md:grid-cols-3 gap-8 mb-6">
+                    <div>
+                        <h4 class="text-white font-semibold mb-3">Payment Policies</h4>
+                        <ul class="text-white/80 text-sm space-y-2">
+                            <li>• All payments are non-refundable</li>
+                            <li>• Payment confirmation via SMS/Email</li>
+                            <li>• Late fee charges may apply</li>
+                            <li>• Installment options available</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-semibold mb-3">Security & Privacy</h4>
+                        <ul class="text-white/80 text-sm space-y-2">
+                            <li>• 256-bit SSL encryption</li>
+                            <li>• PCI DSS compliant</li>
+                            <li>• Data protection guaranteed</li>
+                            <li>• Secure payment gateway</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-semibold mb-3">Support</h4>
+                        <ul class="text-white/80 text-sm space-y-2">
+                            <li>• 24/7 payment support</li>
+                            <li>• Transaction dispute resolution</li>
+                            <li>• Technical assistance</li>
+                            <li>• Fee inquiry helpline</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="border-t border-white/20 pt-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center text-white/70 text-sm">
+                        <p>&copy; 2025 <a href="https://www.chaitanyashree.in" target="_blank" class="hover:text-white transition-colors cursor-pointer underline">Chaitanya Shree Academy</a>. All rights reserved.</p>
+                        <div class="flex space-x-6 mt-4 md:mt-0">
+                            <button onclick="showTerms()" class="hover:text-white transition-colors cursor-pointer">Terms of Service</button>
+                            <button onclick="showPrivacyPolicy()" class="hover:text-white transition-colors cursor-pointer">Privacy Policy</button>
+                            <button onclick="showRefundPolicy()" class="hover:text-white transition-colors cursor-pointer">Refund Policy</button>
+                            <button onclick="showContact()" class="hover:text-white transition-colors cursor-pointer">Contact Us</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Futuristic WhatsApp Chat Widget -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <!-- Glowing WhatsApp Button -->
+        <button 
+            onclick="openWhatsAppPopup()"
+            class="relative flex items-center justify-center w-16 h-16 rounded-full shadow-2xl transition-all duration-500 transform hover:scale-110 group animate-bounce"
+            style="background: linear-gradient(135deg, #25D366 0%, #128C7E 50%, #075E54 100%); box-shadow: 0 0 30px rgba(37, 211, 102, 0.6), 0 0 60px rgba(37, 211, 102, 0.3);"
+            title="Educational Support Chat"
+        >
+            <!-- Pulsing ring effect -->
+            <div class="absolute inset-0 rounded-full animate-ping" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); opacity: 0.3;"></div>
+            
+            <svg class="w-8 h-8 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.63z"/>
+            </svg>
+            
+            <!-- Notification badge -->
+            <div class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center animate-pulse shadow-lg">
+                <span class="text-white text-xs font-bold">📚</span>
+            </div>
+        </button>
+        
+        <!-- Futuristic Tooltip -->
+        <div class="absolute bottom-full right-0 mb-4 px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap transform translate-y-2 group-hover:translate-y-0"
+             style="background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
+            <span class="text-white text-sm font-medium">🎓 Educational Support Available!</span>
+            <div class="absolute top-full right-6 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/80"></div>
+        </div>
+    </div>
+
+    <!-- Futuristic Glassmorphism Chat Popup -->
+    <div id="whatsappPopup" class="fixed bottom-24 right-6 hidden z-50">
+        <div class="w-80 rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-500 scale-95 opacity-0"
+             style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);"
+             id="chatWidget">
+            
+            <!-- Glassmorphism Header -->
+            <div class="px-5 py-4 border-b border-white/10"
+                 style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.2) 0%, rgba(18, 140, 126, 0.2) 100%);">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <!-- Support Agent Avatar -->
+                        <div class="relative">
+                            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white/20">
+                                <img 
+                                    src="https://cdn.shopify.com/s/files/1/0685/1900/2265/files/WhatsApp_Image_2025-07-06_at_13.21.50_1b7bb450.jpg?v=1751788345" 
+                                    alt="Chaitanya Shree Academy Logo" 
+                                    class="w-full h-full object-cover"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                >
+                                <div class="w-full h-full flex items-center justify-center text-white text-lg bg-gradient-to-br from-blue-600 to-purple-600" style="display: none;">
+                                    🎓
+                                </div>
+                            </div>
+                            <!-- Online indicator -->
+                            <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-slate-900 animate-pulse"></div>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-semibold text-sm">Chaitanya Shree Academy - Fees Support/Assistance</h3>
+                            <p class="text-green-300 text-xs flex items-center">
+                                <span class="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
+                                Need Help ??
+                            </p>
+                        </div>
+                    </div>
+                    <button onclick="closeWhatsAppPopup()" 
+                            class="text-white/60 hover:text-white text-xl transition-colors duration-200 hover:rotate-90 transform">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-4">
+                <div class="mb-3">
+                    <p class="text-white/80 text-sm mb-4">How can we help you today?</p>
+                    
+                    <!-- Futuristic Quick Options -->
+                    <div class="space-y-2 mb-4">
+                        <button 
+                            onclick="selectQuickMessage('💸 What are the course fees and payment options?')"
+                            class="w-full text-left px-4 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 text-sm text-white border border-white/10 hover:border-green-400/50"
+                            style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);"
+                            onmouseover="this.style.background='rgba(37, 211, 102, 0.1)'"
+                            onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'"
+                        >
+                            💸 Course Fees?
+                        </button>
+                        <button 
+                            onclick="selectQuickMessage('💰 I want to know my remaining fee balance')"
+                            class="w-full text-left px-4 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 text-sm text-white border border-white/10 hover:border-blue-400/50"
+                            style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);"
+                            onmouseover="this.style.background='rgba(59, 130, 246, 0.1)'"
+                            onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'"
+                        >
+                            💰 Remaining Fee Balance?
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Futuristic Message Input -->
+                <div class="mb-3">
+                    <textarea 
+                        id="customMessage" 
+                        rows="2" 
+                        class="w-full px-3 py-2 rounded-xl resize-none text-sm text-white placeholder-white/50 border border-white/10 focus:border-green-400/50 focus:outline-none transition-all duration-300"
+                        style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);"
+                        placeholder="Type your query..."
+                    ></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex space-x-3">
+                    <button 
+                        onclick="sendToWhatsApp()"
+                        class="flex-1 py-3 px-4 rounded-xl font-medium text-sm text-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 border border-green-400/50"
+                        style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.8) 0%, rgba(18, 140, 126, 0.8) 100%); backdrop-filter: blur(10px); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);"
+                    >
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.63z"/>
+                        </svg>
+                        <span>Start Chat</span>
+                    </button>
+                    <button 
+                        onclick="closeWhatsAppPopup()"
+                        class="px-4 py-3 rounded-xl text-white/70 hover:text-white transition-all duration-300 border border-white/10 hover:border-white/30"
+                        style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="mt-3 p-3 rounded-xl border border-green-400/20"
+                     style="background: rgba(37, 211, 102, 0.05); backdrop-filter: blur(10px);">
+                    <div class="flex items-center space-x-2 text-xs text-green-300">
+                        <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                        <span>📞 +91 7676272709 • Fees Support 24x7</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Futuristic Arrow -->
+        <div class="absolute bottom-0 right-8 transform translate-y-full">
+            <div class="w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent"
+                 style="border-top-color: rgba(15, 23, 42, 0.85); filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));"></div>
+        </div>
+    </div>
+
+    <!-- Terms and Conditions Modal -->
+    <div id="termsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Terms and Conditions</h2>
+                    <button onclick="closeTerms()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[70vh]">
+                <div class="prose prose-sm max-w-none text-gray-700 leading-relaxed">
+                    <p class="mb-4">For the purpose of these Terms and Conditions, The term "we", "us", "our" used anywhere on this page shall mean <strong>CHAITANYA SHREE EDUCATIONAL SOCIAL AND CULTURAL TRUST</strong>, whose registered/operational office is Chaitanya Shree Academy, Maruthi Extension, Malur Kolar KARNATAKA 563130. "you", "your", "user", "visitor" shall mean any natural or legal person who is visiting our website and/or agreed to purchase from us.</p>
+                    
+                    <p class="mb-4">Your use of the website and/or purchase from us are governed by following Terms and Conditions:</p>
+                    
+                    <p class="mb-4">The content of the pages of this website is subject to change without notice. Neither we nor any third parties provide any warranty or guarantee as to the accuracy, timeliness, performance, completeness or suitability of the information and materials found or offered on this website for any particular purpose. You acknowledge that such information and materials may contain inaccuracies or errors and we expressly exclude liability for any such inaccuracies or errors to the fullest extent permitted by law.</p>
+                    
+                    <p class="mb-4">Your use of any information or materials on our website and/or product pages is entirely at your own risk, for which we shall not be liable. It shall be your own responsibility to ensure that any products, services or information available through our website and/or product pages meet your specific requirements.</p>
+                    
+                    <p class="mb-4">Our website contains material which is owned by or licensed to us. This material includes, but are not limited to, the design, layout, look, appearance and graphics. Reproduction is prohibited other than in accordance with the copyright notice, which forms part of these terms and conditions.</p>
+                    
+                    <p class="mb-4">All trademarks reproduced in our website which are not the property of, or licensed to, the operator are acknowledged on the website. Unauthorized use of information provided by us shall give rise to a claim for damages and/or be a criminal offense.</p>
+                    
+                    <p class="mb-4">From time to time our website may also include links to other websites. These links are provided for your convenience to provide further information. You may not create a link to our website from another website or document without CHAITANYA SHREE EDUCATIONAL SOCIAL AND CULTURAL TRUST's prior written consent.</p>
+                    
+                    <p class="mb-4">Any dispute arising out of use of our website and/or purchase with us and/or any engagement with us is subject to the laws of India.</p>
+                    
+                    <p class="mb-4">We, shall be under no liability whatsoever in respect of any loss or damage arising directly or indirectly out of the decline of authorization for any Transaction, on Account of the Cardholder having exceeded the preset limit mutually agreed by us with our acquiring bank from time to time.</p>
+                </div>
+            </div>
+            <div class="p-6 border-t border-gray-200 text-center">
+                <button onclick="closeTerms()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors">
+                    I Understand
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refund Policy Modal -->
+    <div id="refundModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Cancellations and Refunds</h2>
+                    <button onclick="closeRefundPolicy()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[70vh]">
+                <div class="prose prose-sm max-w-none text-gray-700 leading-relaxed">
+                    <p class="mb-4"><strong>CHAITANYA SHREE EDUCATIONAL SOCIAL AND CULTURAL TRUST</strong> believes in helping its students as far as possible, and has therefore a liberal cancellation policy. Under this policy:</p>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Fee Cancellation Policy</h3>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li>Fee cancellations will be considered only if the request is made within <strong>7 days</strong> of payment and before the commencement of classes.</li>
+                            <li>However, the cancellation request may not be entertained if the student has already attended classes or accessed educational materials.</li>
+                            <li>CHAITANYA SHREE EDUCATIONAL SOCIAL AND CULTURAL TRUST does not accept cancellation requests once the academic session has begun.</li>
+                            <li>Refunds may be considered if the student establishes that the educational services provided do not meet the promised standards.</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Service Quality Issues</h3>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li>In case of concerns regarding the quality of educational services, please report the same to our Academic Team.</li>
+                            <li>The request will be reviewed by our academic committee and appropriate action will be taken.</li>
+                            <li>Such concerns should be reported within <strong>15 days</strong> of the issue arising.</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Course Expectations</h3>
+                        <p class="mb-2">In case you feel that the educational services received do not match the course description or your expectations, you must bring it to the notice of our student support team within <strong>15 days</strong>. The Academic Team will review your complaint and take an appropriate decision.</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Transfer Policy</h3>
+                        <p class="mb-2">Students may request to transfer to a different batch or course subject to availability and academic requirements. Transfer requests are subject to approval by the Academic Committee.</p>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <h3 class="text-lg font-semibold text-blue-800 mb-2">Refund Processing</h3>
+                        <p class="text-blue-700">In case of any Refunds approved by the CHAITANYA SHREE EDUCATIONAL SOCIAL AND CULTURAL TRUST, it'll take <strong>6-8 days</strong> for the refund to be processed to the end customer.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-gray-200 text-center">
+                <button onclick="closeRefundPolicy()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors">
+                    I Understand
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Privacy Policy</h2>
+                    <button onclick="closePrivacyPolicy()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[70vh]">
+                <div class="prose prose-sm max-w-none text-gray-700 leading-relaxed">
+                    <p class="mb-4">This privacy policy sets out how <strong>CHAITANYA SHREE EDUCATIONAL SOCIAL AND CULTURAL TRUST</strong> uses and protects any information that you give CHAITANYA SHREE EDUCATIONAL SOCIAL AND CULTURAL TRUST when you visit their website and/or agree to purchase from them.</p>
+                    
+                    <p class="mb-4">CHAITANYA SHREE EDUCATIONAL SOCIAL AND CULTURAL TRUST is committed to ensuring that your privacy is protected. Should we ask you to provide certain information by which you can be identified when using this website, and then you can be assured that it will only be used in accordance with this privacy statement.</p>
+                    
+                    <p class="mb-4">CHAITANYA SHREE EDUCATIONAL SOCIAL AND CULTURAL TRUST may change this policy from time to time by updating this page. You should check this page from time to time to ensure that you adhere to these changes.</p>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Information We Collect</h3>
+                        <p class="mb-2">We may collect the following information:</p>
+                        <ul class="list-disc pl-6 space-y-1">
+                            <li>Name</li>
+                            <li>Contact information including email address</li>
+                            <li>Demographic information such as postcode, preferences and interests, if required</li>
+                            <li>Other information relevant to customer surveys and/or offers</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">How We Use Your Information</h3>
+                        <p class="mb-2">We require this information to understand your needs and provide you with a better service, and in particular for the following reasons:</p>
+                        <ul class="list-disc pl-6 space-y-1">
+                            <li>Internal record keeping</li>
+                            <li>We may use the information to improve our products and services</li>
+                            <li>We may periodically send promotional emails about new products, special offers or other information which we think you may find interesting using the email address which you have provided</li>
+                            <li>From time to time, we may also use your information to contact you for market research purposes. We may contact you by email, phone, fax or mail</li>
+                            <li>We may use the information to customise the website according to your interests</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Security</h3>
+                        <p class="mb-2">We are committed to ensuring that your information is secure. In order to prevent unauthorised access or disclosure we have put in suitable measures.</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">How We Use Cookies</h3>
+                        <p class="mb-2">A cookie is a small file which asks permission to be placed on your computer's hard drive. Once you agree, the file is added and the cookie helps analyze web traffic or lets you know when you visit a particular site. Cookies allow web applications to respond to you as an individual. The web application can tailor its operations to your needs, likes and dislikes by gathering and remembering information about your preferences.</p>
+                        <p class="mb-2">We use traffic log cookies to identify which pages are being used. This helps us analyze data about webpage traffic and improve our website in order to tailor it to customer needs. We only use this information for statistical analysis purposes and then the data is removed from the system.</p>
+                        <p class="mb-2">Overall, cookies help us provide you with a better website, by enabling us to monitor which pages you find useful and which you do not.</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Controlling Your Personal Information</h3>
+                        <p class="mb-2">You may choose to restrict the collection or use of your personal information in the following ways:</p>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li>Whenever you are asked to fill in a form on the website, look for the box that you can click to indicate that you do not want the information to be used by anybody for direct marketing purposes</li>
+                            <li>If you have previously agreed to us using your personal information for direct marketing purposes, you may change your mind at any time by writing to or emailing us at <strong>support@sohansoft.tech</strong></li>
+                        </ul>
+                        <p class="mt-3 mb-2">We will not sell, distribute or lease your personal information to third parties unless we have your permission or are required by law to do so. We may use your personal information to send you promotional information about third parties which we think you may find interesting if you tell us that you wish this to happen.</p>
+                        <p class="mb-2">If you believe that any information we are holding on you is incorrect or incomplete, please write to <strong>Chaitanya Shree Academy, Maruthi Extension, Malur Kolar KARNATAKA 563130</strong> or contact us at <strong>7676272709</strong> or <strong>support@sohansoft.tech</strong> as soon as possible. We will promptly correct any information found to be incorrect.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-gray-200 text-center">
+                <button onclick="closePrivacyPolicy()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors">
+                    I Understand
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Us Modal -->
+    <div id="contactModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl max-h-[90vh] overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Contact Us</h2>
+                    <button onclick="closeContact()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Get in Touch</h3>
+                        <p class="text-gray-600 mb-4">You may contact us using the information below:</p>
+                    </div>
+
+                    <div class="grid gap-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h8V4H6z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Legal Entity</h4>
+                                <p class="text-gray-600">CHAITANYA SHREE EDUCATIONAL SOCIAL AND CULTURAL TRUST</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Address</h4>
+                                <p class="text-gray-600">Chaitanya Shree Academy<br>Maruthi Extension, Malur<br>Kolar, KARNATAKA 563130</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Phone</h4>
+                                <p class="text-gray-600">7676272709</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Email</h4>
+                                <p class="text-gray-600">support@sohansoft.tech</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-gray-200 text-center">
+                <button onclick="closeContact()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form elements
+        const form = document.getElementById('paymentForm');
+        const studentNameInput = document.getElementById('studentName');
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        const fatherNameInput = document.getElementById('fatherName');
+        const studentClassInput = document.getElementById('studentClass');
+        const feeAmountInput = document.getElementById('feeAmount');
+        const agreeTermsInput = document.getElementById('agreeTerms');
+        const paymentSummary = document.getElementById('paymentSummary');
+
+        // Summary elements
+        const summaryStudent = document.getElementById('summaryStudent');
+        const summaryPhone = document.getElementById('summaryPhone');
+        const summaryFather = document.getElementById('summaryFather');
+        const summaryClass = document.getElementById('summaryClass');
+        const summaryTuitionFee = document.getElementById('summaryTuitionFee');
+        const summaryServiceFee = document.getElementById('summaryServiceFee');
+        const summaryAmount = document.getElementById('summaryAmount');
+
+        // Update summary in real-time
+        function updateSummary() {
+            const studentName = studentNameInput.value;
+            const phoneNumber = phoneNumberInput.value;
+            const fatherName = fatherNameInput.value;
+            const studentClass = studentClassInput.value;
+            const feeAmount = parseFloat(feeAmountInput.value) || 0;
+
+            if (studentName || phoneNumber || fatherName || studentClass || feeAmount) {
+                paymentSummary.classList.remove('hidden');
+                summaryStudent.textContent = studentName || '-';
+                summaryPhone.textContent = phoneNumber || '-';
+                summaryFather.textContent = fatherName || '-';
+                summaryClass.textContent = studentClass || '-';
+                
+                // Calculate service fee (2%)
+                const serviceFee = feeAmount * 0.02;
+                const totalAmount = feeAmount + serviceFee;
+                
+                summaryTuitionFee.textContent = feeAmount ? `₹${feeAmount.toLocaleString('en-IN')}` : '₹0';
+                summaryServiceFee.textContent = feeAmount ? `₹${serviceFee.toLocaleString('en-IN')}` : '₹0';
+                summaryAmount.textContent = feeAmount ? `₹${totalAmount.toLocaleString('en-IN')}` : '₹0';
+            } else {
+                paymentSummary.classList.add('hidden');
+            }
+        }
+
+        // Add event listeners for real-time updates
+        [studentNameInput, phoneNumberInput, fatherNameInput, studentClassInput, feeAmountInput].forEach(input => {
+            input.addEventListener('input', updateSummary);
+            input.addEventListener('change', updateSummary);
+        });
+
+        // Phone number validation
+        phoneNumberInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+        });
+
+        // Amount formatting
+        feeAmountInput.addEventListener('input', function(e) {
+            if (this.value < 0) this.value = 0;
+        });
+
+        // Form submission and Razorpay integration
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = studentNameInput.value.trim();
+            const phoneNumber = phoneNumberInput.value.trim();
+            const fatherName = fatherNameInput.value.trim();
+            const studentClass = studentClassInput.value.trim();
+            const feeAmount = parseFloat(feeAmountInput.value);
+            const agreeTerms = agreeTermsInput.checked;
+
+            // Validation
+            if (!studentName || !phoneNumber || !fatherName || !studentClass || !feeAmount) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            if (phoneNumber.length !== 10) {
+                alert('Please enter a valid 10-digit phone number');
+                return;
+            }
+
+            if (feeAmount <= 0) {
+                alert('Please enter a valid fee amount');
+                return;
+            }
+
+            if (!agreeTerms) {
+                alert('Please agree to the Terms and Conditions, Privacy Policy, and Refund Policy');
+                return;
+            }
+
+            // Calculate service fee and total amount
+            const serviceFee = feeAmount * 0.02;
+            const totalAmount = feeAmount + serviceFee;
+
+            // Razorpay options
+            const options = {
+                key: 'rzp_live_RLUQA8Ai7kLNIm', // Your live Razorpay key
+                amount: Math.round(totalAmount * 100), // Total amount in paise (including service fee)
+                currency: 'INR',
+                name: 'College Fee Payment',
+                description: `Tuition Fee: ₹${feeAmount.toLocaleString('en-IN')} + Service Fee: ₹${serviceFee.toLocaleString('en-IN')}`,
+                image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzY2N2VlYSIvPgo8cGF0aCBkPSJNMTIgMTZIMjhWMjRIMTJWMTZaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K',
+                prefill: {
+                    name: studentName,
+                    contact: phoneNumber,
+                    email: '' // Optional
+                },
+                notes: {
+                    student_name: studentName,
+                    father_name: fatherName,
+                    phone_number: phoneNumber,
+                    student_class: studentClass,
+                    fee_type: 'Tuition Fee',
+                    tuition_fee: feeAmount,
+                    service_fee: serviceFee,
+                    total_amount: totalAmount
+                },
+                theme: {
+                    color: '#667eea'
+                },
+                handler: function(response) {
+                    // Payment successful
+                    alert(`Payment Successful!\nPayment ID: ${response.razorpay_payment_id}\nStudent: ${studentName}\nTuition Fee: ₹${feeAmount.toLocaleString('en-IN')}\nService Fee: ₹${serviceFee.toLocaleString('en-IN')}\nTotal Paid: ₹${totalAmount.toLocaleString('en-IN')}`);
+                    
+                    // Reset form
+                    form.reset();
+                    updateSummary();
+                    
+                    // In a real application, you would send this data to your server
+                    console.log('Payment Details:', {
+                        payment_id: response.razorpay_payment_id,
+                        student_name: studentName,
+                        father_name: fatherName,
+                        phone_number: phoneNumber,
+                        tuition_fee: feeAmount,
+                        service_fee: serviceFee,
+                        total_amount: totalAmount
+                    });
+                },
+                modal: {
+                    ondismiss: function() {
+                        console.log('Payment cancelled by user');
+                    }
+                }
+            };
+
+            // Open Razorpay checkout
+            const rzp = new Razorpay(options);
+            rzp.open();
+        });
+
+        // Initialize summary on page load
+        updateSummary();
+
+        // Interactive Background Effects
+        function createFloatingParticles() {
+            const particleContainer = document.getElementById('particleContainer');
+            
+            function createParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle';
+                
+                // Random size between 4px and 12px
+                const size = Math.random() * 8 + 4;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random horizontal position
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random animation duration between 10-20 seconds
+                const duration = Math.random() * 10 + 10;
+                particle.style.animationDuration = duration + 's';
+                
+                // Random delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                particleContainer.appendChild(particle);
+                
+                // Remove particle after animation completes
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, (duration + 5) * 1000);
+            }
+            
+            // Create initial particles
+            for (let i = 0; i < 15; i++) {
+                setTimeout(createParticle, i * 1000);
+            }
+            
+            // Continue creating particles
+            setInterval(createParticle, 2000);
+        }
+
+        // Interactive Mouse Glow Effect
+        function initInteractiveGlow() {
+            const glow = document.getElementById('interactiveGlow');
+            let mouseX = 0;
+            let mouseY = 0;
+            let glowX = 0;
+            let glowY = 0;
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                glow.style.opacity = '1';
+            });
+            
+            document.addEventListener('mouseleave', () => {
+                glow.style.opacity = '0';
+            });
+            
+            // Smooth glow movement
+            function animateGlow() {
+                glowX += (mouseX - glowX) * 0.1;
+                glowY += (mouseY - glowY) * 0.1;
+                
+                glow.style.left = (glowX - 150) + 'px';
+                glow.style.top = (glowY - 150) + 'px';
+                
+                requestAnimationFrame(animateGlow);
+            }
+            
+            animateGlow();
+        }
+
+        // Card Hover Effects
+        function initCardEffects() {
+            const cards = document.querySelectorAll('.card-shadow');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                    this.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+                });
+            });
+        }
+
+        // Parallax Effect for Header
+        function initParallaxEffect() {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const header = document.getElementById('pageHeader');
+                if (header) {
+                    header.style.transform = `translateY(${scrolled * 0.5}px)`;
+                    header.style.opacity = Math.max(0, 1 - scrolled / 300);
+                }
+            });
+        }
+
+        // Initialize all effects when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            createFloatingParticles();
+            initInteractiveGlow();
+            initCardEffects();
+            initParallaxEffect();
+        });
+
+        // Terms and Conditions Modal Functions
+        function showTerms() {
+            document.getElementById('termsModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeTerms() {
+            document.getElementById('termsModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Refund Policy Modal Functions
+        function showRefundPolicy() {
+            document.getElementById('refundModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeRefundPolicy() {
+            document.getElementById('refundModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Privacy Policy Modal Functions
+        function showPrivacyPolicy() {
+            document.getElementById('privacyModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePrivacyPolicy() {
+            document.getElementById('privacyModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Contact Modal Functions
+        function showContact() {
+            document.getElementById('contactModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeContact() {
+            document.getElementById('contactModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // WhatsApp Popup Functions with Smooth Animations
+        function openWhatsAppPopup() {
+            const popup = document.getElementById('whatsappPopup');
+            const widget = document.getElementById('chatWidget');
+            
+            popup.classList.remove('hidden');
+            
+            // Trigger animation after a small delay to ensure element is rendered
+            setTimeout(() => {
+                widget.style.transform = 'scale(1)';
+                widget.style.opacity = '1';
+            }, 10);
+        }
+
+        function closeWhatsAppPopup() {
+            const popup = document.getElementById('whatsappPopup');
+            const widget = document.getElementById('chatWidget');
+            
+            // Animate out
+            widget.style.transform = 'scale(0.95)';
+            widget.style.opacity = '0';
+            
+            // Hide after animation completes
+            setTimeout(() => {
+                popup.classList.add('hidden');
+                // Clear the custom message
+                document.getElementById('customMessage').value = '';
+            }, 300);
+        }
+
+        function selectQuickMessage(message) {
+            document.getElementById('customMessage').value = message;
+        }
+
+        function sendToWhatsApp() {
+            const message = document.getElementById('customMessage').value.trim();
+            
+            if (!message) {
+                alert('Please select a quick option or write your own message');
+                return;
+            }
+
+            // Encode the message for URL
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/918088397572?text=${encodedMessage}`;
+            
+            // Open WhatsApp
+            window.open(whatsappUrl, '_blank');
+            
+            // Close the popup
+            closeWhatsAppPopup();
+        }
+
+        // Close modals when clicking outside
+        document.getElementById('termsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTerms();
+            }
+        });
+
+        document.getElementById('refundModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRefundPolicy();
+            }
+        });
+
+        document.getElementById('privacyModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePrivacyPolicy();
+            }
+        });
+
+        document.getElementById('contactModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeContact();
+            }
+        });
+
+
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984359a8d2fac1b8',t:'MTc1ODcyODExMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
